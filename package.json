@@ -1,0 +1,21 @@
+{
+  "name": "awo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^2.6.1",
+    "discord.js": "^12.5.1",
+    "opusscript": "^0.0.7",
+    "random-puppy": "^1.1.0",
+    "update": "^0.7.4",
+    "ws": "^7.3.0",
+    "yt-search": "^1.1.2",
+    "ytdl-core": "^2.1.5"
+  }
+}
