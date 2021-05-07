@@ -61,14 +61,14 @@ itemList.set('pink', 600);
 itemList.set('light blue', 900);
 itemList.set('turquoise', 1000);
 itemList.set('black', 2000);
+/*itemList.set('', );
 itemList.set('', );
 itemList.set('', );
 itemList.set('', );
 itemList.set('', );
 itemList.set('', );
 itemList.set('', );
-itemList.set('', );
-itemList.set('', );
+itemList.set('', );*/
 
 //#endregion
 
@@ -262,6 +262,7 @@ client.on('message', async (message) => {
     }
     
     let sender = message.member;
+    if(sender == null) { return; }
     let splitmessage = message.content.split(seperator);
     let splitmessagespace = message.content.split(seperatorspace);
     let channel = message.channel;
@@ -427,7 +428,7 @@ client.on('message', async (message) => {
         //rank stuff
         let xpAdd = betweenTwoNums(8, 18) //number between 7 and 15 [lowered]
     
-        if(!xp[sender.id]){
+        if(!xp[sender.user.id]){
             xp[sender.id] = {
                 name: sender.user.username,
                 xp: 0,
@@ -435,24 +436,24 @@ client.on('message', async (message) => {
             };
         }
         
-        let currxp = xp[sender.id].xp;
-        let currlvl = xp[sender.id].level;
-        let nextLvl = xp[sender.id].level * rankLengthData; //increasing next level max xp Ex. default 400
-        let prevLvl = (xp[sender.id].level-1) * rankLengthData;
+        let currxp = xp[sender.user.id].xp;
+        let currlvl = xp[sender.user.id].level;
+        let nextLvl = xp[sender.user.id].level * rankLengthData; //increasing next level max xp Ex. default 400
+        let prevLvl = (xp[sender.user.id].level-1) * rankLengthData;
 
         //eco data
-        let currcoins = ecoDatabase[sender.id].Coins;
-        let expenses = ecoDatabase[sender.id].Expens;
-        let currclubs = ecoDatabase[sender.id].Clubs;
-        let currItems = ecoDatabase[sender.id].Items;
+        let currcoins = ecoDatabase[sender.user.id].Coins;
+        let expenses = ecoDatabase[sender.user.id].Expens;
+        let currclubs = ecoDatabase[sender.user.id].Clubs;
+        let currItems = ecoDatabase[sender.user.id].Items;
     
-        let currmultiplier = await ecoDatabase[sender.id].Multiplier;
-        let cardImage = await ecoDatabase[sender.id].CardIm;
-        let barcolor = await ecoDatabase[sender.id].BarCol;
+        let currmultiplier = await ecoDatabase[sender.user.id].Multiplier;
+        let cardImage = await ecoDatabase[sender.user.id].CardIm;
+        let barcolor = await ecoDatabase[sender.user.id].BarCol;
 
         let backgroundsSplit = cardImage.split('~');
         let barcolorSplit = barcolor.split('~');
-        let colectedDateData = await ecoDatabase[sender.id].CollectedDate;
+        let colectedDateData = await ecoDatabase[sender.user.id].CollectedDate;
         let colecTimeSplit = await colectedDateData.split('~'); //0 is daily, 1 is last message
 
         if(message.content.startsWith(`${prefix}rank`)){
@@ -1332,8 +1333,9 @@ client.on('message', async (message) => {
                 return ranksOffNotif();
             }
 
-            if(parseInt(splitmessagespace[0].substr(7)) >= 100){
-                let coinInput = parseInt(splitmessagespace[0].substr(7));
+            if(parseInt(splitmessagespace[0].substr(6)) >= 100){
+                let coinInput = parseInt(splitmessagespace[0].substr(6));
+                console.log(coinInput);
 
                 if(coinInput > (currcoins * 2)){
                     return channel.send("This looks shady, I'm not accepting bets more that twice what you have");
@@ -1389,7 +1391,7 @@ client.on('message', async (message) => {
                                 .addField(`**Bet on:**`, `Team 🇦`, true)
                                 .addField(`**Wager**`, `${coinInput} coins`, true)
                                 .addField(`**Results**`, `**Won Amount -** ${finalAddA} X ${1+currmultiplier} \n **total Earnings -** ${totalCoins} coins :white_check_mark:`)
-                                .setFooter(`Just three letters: EZPZ`);
+                                .setFooter(`Just four letters: EZPZ`);
 
                             return channel.send(winEmbed);
                         }
@@ -1458,7 +1460,7 @@ client.on('message', async (message) => {
                     }
                 })
             }
-            else if(parseInt(splitmessagespace[0].substr(7)) < 100){
+            else if(parseInt(splitmessagespace[0].substr(6)) < 100){
                 return channel.send(`You can't gamble less than **100 coins**, you what they say: *"go big or go home a loser"*`);
             }
             else{
@@ -1629,7 +1631,7 @@ client.on('message', async (message) => {
                 return ranksOffNotif();
             }
 
-            var itemInput = splitmessagespace[0].substr(7);
+            var itemInput = splitmessagespace[0].substr(6);
 
             if(itemInput.length < 1){
                 let buyEmbed = new Discord.MessageEmbed() //C:\ffmpeg\bin
@@ -1845,7 +1847,7 @@ client.on('message', async (message) => {
             return channel.send(`I'm afraid that ${serverName} is not a primie location, the property value is going down since the ranks were turned off... pack your bags!`);
         }
         if(calc === 5){
-            let owner = message.guild.members.get(message.guild.ownerID);
+            let owner = message.guild.members.cache.get(message.guild.ownerID);
             return channel.send(`Your going to have to ask manager ${owner.user.username} about this one...`);
         }
         if(calc === 6){
@@ -2026,8 +2028,8 @@ client.on('message', async (message) => {
                 }
                 
                 
-                channel.fetchMessages({limit: 1}).then(async (messages) => {
-                    let pollMessage = messages.first();
+                channel.messages.fetch({limit: 1}).then(async (messages) => {
+                    let pollMessage = messages.cache.first();
                     
                     if(pollMessage.author.bot){
                         
@@ -2328,7 +2330,7 @@ client.on('message', async (message) => {
         else{
             let boardLink = trelloLinkData.Link;
 
-            let posterMemberT = message.guild.members.get(trelloLinkData.PosterID);
+            let posterMemberT = message.guild.members.cache.get(trelloLinkData.PosterID);
             let posterNameT = posterMemberT.user.username;
             let posterAvT = posterMemberT.user.displayAvatarURL({ format: "png" });
 
@@ -2356,7 +2358,7 @@ client.on('message', async (message) => {
         let postDate = lastUpdateData.PostDate;
         let logContent = lastUpdateData.PostContent;
         //get poster name and pfp from id
-        let posterMember = message.guild.members.get(lastUpdateData.PosterID);
+        let posterMember = message.guild.members.cache.get(lastUpdateData.PosterID);
         let posterName = posterMember.user.username;
         let posterAv = posterMember.user.displayAvatarURL({ format: "png" });
 
@@ -2547,7 +2549,7 @@ client.on('message', async (message) => {
                 channel.send(`:partying_face: You are now added to the list of members looking for a match, you will be **notified when messages are posted in <#674799696295755837>**`);
                 sender.addRole("711743431151714344");
     
-                let membersWithRole = message.guild.members.filter(member => { 
+                let membersWithRole = message.guild.members.cache.filter(member => { 
                     return member.roles.get("711743431151714344");
                 }).map(member => {
                     return member.user.username;
@@ -2574,7 +2576,7 @@ client.on('message', async (message) => {
     if(message.content.startsWith(`${prefix}waiting list`)){
         if(serverName == awoServer){
             //let membersWithRole = ["No one is waiting D:"];
-            let membersWithRole = message.guild.members.filter(member => { 
+            let membersWithRole = message.guild.members.cache.filter(member => { 
                 return member.roles.get("711743431151714344");
             }).map(member => {
                 return `**- ${member.user.username}**`;
@@ -3344,7 +3346,7 @@ client.on('message', async (message) => {
 
                         async function deleteMessages(){
                             await message.delete(0).then(async (deletedMes) => {
-                                channel.fetchMessages({ limit: deleteRealNum}).then( async (messages) => {
+                                channel.messages.fetch({ limit: deleteRealNum}).then( async (messages) => {
                             
                                     channel.bulkDelete(messages);
             
@@ -3586,8 +3588,8 @@ client.on('message', async (message) => {
                     }
     
                     function setReactions(){
-                        channel.fetchMessages({limit: 1}).then(async (messages) => {
-                            let rolesMessage = messages.first();
+                        channel.messages.fetch({limit: 1}).then(async (messages) => {
+                            let rolesMessage = messages.cache.first();
                             
                             serverDatabase[serverID].reactionMesIDs[rolesMessage.id] = exportRect; //here, porblem: cannot re associate the multiple used emojis with the multiple use roles, maybe some sort of indes assignment
         
