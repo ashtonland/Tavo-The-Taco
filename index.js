@@ -2185,6 +2185,7 @@ client.on('message', async (message) => {
         message.delete(0);            
     }
 
+    //HERE
     if(message.content.startsWith(`${prefix}play`)){
         var songInput = splitmessagespace[0].substr(8);
         var videoName = "video not found."
