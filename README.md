@@ -16,8 +16,8 @@ Tavo is a discord bot with a fun economy system, levelling system, and some game
 | :------------------- | :------------------- |
 | [Dev](https://github.com/Treixatek/Tavo-The-Taco/tree/dev)       |      New and untested features or fixes, new commits go here       |
 | [Main](https://github.com/Treixatek/Tavo-The-Taco/tree/main) |     The stable build, the current version of the bot      |
-
-😄 Feel free to contribute!
+### Resources
+- [Project board](https://github.com/Treixatek/Tavo-The-Taco/projects/1) - Feel free to contribute!🥳
 
 ## In Progress
 - Updating to discordjs api v12 ⚠
