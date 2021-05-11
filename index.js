@@ -1134,7 +1134,6 @@ client.on('message', async (message) => {
                 }
     
                 for (let index = 0; index < currclubs.length; index++) {
-                    channel.send(currclubs[index]);
                     if(currclubs[index] != "none"){
                         final[index] = `**${index + 1}.** ${currclubs[index]}`;
                     }
