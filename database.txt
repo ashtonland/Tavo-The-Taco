@@ -89,8 +89,8 @@
         "xpData": {
             "626616845746831400": {
                 "name": "Trei",
-                "xp": 713,
-                "level": 2
+                "xp": 1001,
+                "level": 3
             },
             "805890107194343457": {
                 "name": "Ozzie Osbourne",

@@ -2343,7 +2343,7 @@ client.on('message', async (message) => {
                 channel.send(addedEmbed);
                 //channel.send(`:trumpet: **${senderName}** has added **${videoName}** to the queue`)
 
-                if(message.guild.voice.connection == undefined){
+                if(message.guild.voice == undefined){
                     sender.voice.channel.join().then(function(connection) {
                         play(connection, message);
                     })
@@ -2356,8 +2356,13 @@ client.on('message', async (message) => {
     if(message.content.startsWith(`${prefix}queue`) || message.content.startsWith(`${prefix}q`)){
         var server = servers[serverID];
         var sQueue = "";
+        var queueItem;
         if(server != undefined){
             sQueue = server.queueNames;
+            search({ query: server.queueNames[0] }, async function (err, r){
+                queueItem = r.videos[0].thumbnail;
+            })
+            
         }
         
         let final = ["the queue is empty"];
@@ -2369,6 +2374,7 @@ client.on('message', async (message) => {
         let queueEmbed = new Discord.MessageEmbed()
                 .setColor(musicColor)
                 .setTitle(':saxophone: Music Queue')
+                .setImage(queueItem)
                 .setDescription("**Up next:** \n" + final.join("\n"))
                 .setFooter("commands: play, skip, queue, leave")
 
