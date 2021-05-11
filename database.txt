@@ -31,7 +31,7 @@
         "xpData": {
             "503232711478083595": {
                 "name": "Blueberry Mauro ◈",
-                "xp": 15,
+                "xp": 27,
                 "level": 1
             },
             "387630937510248449": {
@@ -46,12 +46,45 @@
             },
             "515634918500335636": {
                 "name": "adude",
-                "xp": 41,
+                "xp": 53,
                 "level": 1
             },
             "689584183743348821": {
                 "name": "jaxx",
                 "xp": 23,
+                "level": 1
+            },
+            "748895891473301607": {
+                "name": "In_jail_out_soon!",
+                "xp": 11,
+                "level": 1
+            }
+        },
+        "reactionMesIDs": {},
+        "AdLevelPerm": 2,
+        "AdChannelID": "not set",
+        "ModRoleID": "not set",
+        "LogChannelID": "not set",
+        "TrelloLink": "not set",
+        "LastUpdate": "not set",
+        "RankLength": 400,
+        "ranksOn": true
+    },
+    "626620183405920276": {
+        "xpData": {
+            "626616845746831400": {
+                "name": "Trei",
+                "xp": 154,
+                "level": 1
+            },
+            "805890107194343457": {
+                "name": "Ozzie Osbourne",
+                "xp": 33,
+                "level": 1
+            },
+            "701146789348376607": {
+                "name": "Spooky Man",
+                "xp": 126,
                 "level": 1
             }
         },
