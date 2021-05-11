@@ -2355,30 +2355,42 @@ client.on('message', async (message) => {
 
     if(message.content.startsWith(`${prefix}queue`) || message.content.startsWith(`${prefix}q`)){
         var server = servers[serverID];
+        let final = ["the queue is empty"];
         var sQueue = "";
         var queueItem;
+
         if(server != undefined){
             sQueue = server.queueNames;
             search({ query: server.queueNames[0] }, async function (err, r){
                 queueItem = r.videos[0].thumbnail;
-            })
-            
-        }
+
+                for (let index = 0; index < sQueue.length; index++) {
+                    final[index] = (index + 1) + " - " + sQueue[index];
+                }
+                
+                let queueEmbed = new Discord.MessageEmbed()
+                        .setColor(musicColor)
+                        .setTitle(':saxophone: Music Queue')
+                        .setImage(queueItem)
+                        .setDescription("**Up next:** \n" + final.join("\n"))
+                        .setFooter("commands: play, skip, queue, leave")
         
-        let final = ["the queue is empty"];
-
-        for (let index = 0; index < sQueue.length; index++) {
-            final[index] = (index + 1) + " - " + sQueue[index];
+                return channel.send(queueEmbed);
+            })
         }
-
-        let queueEmbed = new Discord.MessageEmbed()
-                .setColor(musicColor)
-                .setTitle(':saxophone: Music Queue')
-                .setImage(queueItem)
-                .setDescription("**Up next:** \n" + final.join("\n"))
-                .setFooter("commands: play, skip, queue, leave")
-
-        return channel.send(queueEmbed);
+        else{ //dont show thumbnail
+            for (let index = 0; index < sQueue.length; index++) {
+                final[index] = (index + 1) + " - " + sQueue[index];
+            }
+            
+            let queueEmbed = new Discord.MessageEmbed()
+                    .setColor(musicColor)
+                    .setTitle(':saxophone: Music Queue')
+                    .setDescription("**Up next:** \n" + final.join("\n"))
+                    .setFooter("commands: play, skip, queue, leave")
+    
+            return channel.send(queueEmbed);
+        }    
     }    
 
     if(message.content.startsWith(`${prefix}skip`)){
