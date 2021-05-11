@@ -3,7 +3,7 @@ const { prefix, seperator, seperatorspace, token, bachosoftServerID, studioServe
 const client = new Discord.Client();
 const ytdl = require("ytdl-core");
 const search = require("yt-search");
-//const randomPuppy = require("random-puppy");
+//const randomPuppy = require('random-puppy');
 const fs = require("fs");
 
 //databases
@@ -15,6 +15,7 @@ const Canvas = require('canvas');
 const { loadImage } = require("canvas");
 const { send, disconnect } = require('process');
 const { count, dir } = require('console');
+const yts = require('yt-search');
 
 var servers = {};
 var topMemes = new Map();
@@ -313,7 +314,7 @@ client.on('message', async (message) => {
     let musicColor = '#ffe838';
     let standardColor = '#eead44';
     let softRed = '#e83f3f';
-    let rankColor ='#162970';
+    let rankColor ='#52c5ff';
     
     //serverDatabase
     let xp;
@@ -878,6 +879,78 @@ client.on('message', async (message) => {
 
             
         }
+        else if(message.content.startsWith(`${prefix}rich`)){
+            if(ranksonData === false){
+
+                return ranksOffNotif();
+            }
+
+            let list = ["**1 - **empty", "**2 - **empty", "**3 - **empty"];
+            let nameList = ["empty"];
+
+            let values = [""];
+            let coinvalues = [""];
+
+            let ind = 0;
+
+            for(i in ecoDatabase){
+                coinvalues[ind] = ecoDatabase[i].Coins + '~' + i;
+                values[ind] = ecoDatabase[i].Coins;
+
+                ind++;
+            }
+
+            values.sort(function(a, b){return b - a});
+            
+
+            let finalCoins = values.slice(0, 3);
+
+            for (let index = 0; index < finalCoins.length; index++) {
+                let leadName = 'error';
+
+                for (let i = 0; i < coinvalues.length; i++) {
+                    let coin_id = coinvalues[i].split("~");
+
+                    if(coin_id[0] == finalCoins[index]){
+
+                        if(xp[coin_id[1]] != undefined){
+
+                            leadName = xp[coin_id[1]].name;
+                        }
+                    }
+                }
+
+                //console.log(leadName[0]);
+                nameList[index] = leadName;
+                list[index] = `**${leadName} -** Net Worth: **${finalCoins[index].toString()}** :dollar:`
+            }
+            //return console.log(nameList);
+            let firstMem = message.guild.members.cache.find(member => member.user.username === nameList[0]);
+
+            if(firstMem === undefined || firstMem === null){
+                let leadersEmbed = new Discord.MessageEmbed()
+                    .setColor(rankColor)
+                    .setTitle(`:coin: ${serverName} Richest`)
+                    .addField(`**:first_place: 1st Place**`, list[0])
+                    .addField(`**:second_place: 2nd Place**`, list[1])
+                    .addField(`**:third_place: 3rd Place**`, list[2])
+
+                return channel.send(leadersEmbed);
+            }
+            else{
+                let leadersEmbed = new Discord.MessageEmbed()
+                    .setColor(rankColor)
+                    .setThumbnail(firstMem.user.displayAvatarURL({ format: "png" }))
+                    .setTitle(`:coin: ${serverName} Richest`)
+                    .addField(`**:first_place: 1st Place**`, list[0])
+                    .addField(`**:second_place: 2nd Place**`, list[1])
+                    .addField(`**:third_place: 3rd Place**`, list[2])
+
+                return channel.send(leadersEmbed);
+            }
+
+            
+        }
         else if(message.content.startsWith(`${prefix}reset`)){
             if(!specialServer){
 
@@ -1006,7 +1079,7 @@ client.on('message', async (message) => {
                 let numTime = Math.ceil(parseFloat(colecTimeSplit[1]) + 100);
 
                 if(dateNow > numTime){
-                    if(message.content.substr(0, 3) != "ai/"){
+                    if(message.content.substr(0, 2) != "t/"){
                         xp[sender.id].xp = currxp + xpAdd;
             
                         if (nextLvl <= xp[sender.id].xp){ // level up
@@ -1014,7 +1087,7 @@ client.on('message', async (message) => {
                             let reachedLvl = currlvl + 1;
                     
                             xp[sender.id].level = currlvl + 1;
-                            channel.send(`**${leveledName}**, you just reached level **${reachedLvl}**! :partying_face:`).then(levelupmes => {levelupmes.delete(30000)});
+                            await channel.send(`**${leveledName}**, you just reached level **${reachedLvl}**! :partying_face:`).then(levelupmes => {levelupmes.delete({ timeout: 30000 })});
                         }
                         
                     }
@@ -1030,7 +1103,7 @@ client.on('message', async (message) => {
                 return;
 
             if(currlvl < adLevel){
-                message.delete(0);
+                message.delete();
                 sender.send(`You cannot send server advertisements, you need to be level ${adLevel}`);
 
                 if(specialServer){
@@ -1054,29 +1127,31 @@ client.on('message', async (message) => {
             if(member == undefined){
                 let currcoinsComma = numberWithCommas(currcoins);
                 let final = ["none"];
-                let itemFinal = ["none"];
+                //let itemFinal = ["none"];
     
                 if(currcoins < 0){
                     currcoinsComma = currcoinsComma + " `in debt`";
                 }
     
                 for (let index = 0; index < currclubs.length; index++) {
-                    if(!currclubs[index] === 'none'){
-                        final[index] = `**- ${currclubs[index]}**`;
+                    if(currclubs[index] != "none"){
+                        final[index] = `**${index + 1}.** ${currclubs[index]}`;
                     }
                 }
+                /*
                 for (let index = 0; index < currItems.length; index++) {
                     if(currItems[index] != "none"){
                         itemFinal[index] = `**- ${currItems[index]}**`;
                     }
-                }
+                }*/
     
                 let balaEmbed = new Discord.MessageEmbed()
                     .setColor(moneyColor)
                     .setTitle(`:moneybag: ${sender.user.username}'s Balance`)
-                    .addField(`STATS`, `**Coins -** ${currcoinsComma} \n **Multiplier -** ${currmultiplier} \n **Expenses -** ${expenses}` + " `weekly total`")
-                    .addField(`ITEMS`, `${itemFinal.join('\n')}`)
-                    .addField(`CLUBS`, `${final.join('\n')}`)
+                    .addField(`STATS`, `**Coins -** ${currcoinsComma} :dollar: \n **Multiplier -** ${currmultiplier} \n **Level -** Lvl ${currlvl} :coin: \n **Expenses -** ${expenses} :outbox_tray:` + " `weekly`", true)
+                    //.addField(`ITEMS`, `${itemFinal.join('\n')}`, true)
+                    .addField(`CLUBS`, `${final.join('\n')}`, true)
+                    .setFooter(`loaded on ${month}/${day}/${year}`, sender.user.avatarURL())
     
                 channel.send(balaEmbed);
             }
@@ -1335,10 +1410,9 @@ client.on('message', async (message) => {
 
             if(parseInt(splitmessagespace[0].substr(6)) >= 100){
                 let coinInput = parseInt(splitmessagespace[0].substr(6));
-                console.log(coinInput);
 
                 if(coinInput > (currcoins * 2)){
-                    return channel.send("This looks shady, I'm not accepting bets more that twice what you have");
+                    return channel.send("This looks shady, I'm not accepting bets more than twice what you actually own");
                 }
 
                 let betFall = Math.floor(Math.random() * 101);
@@ -2091,7 +2165,7 @@ client.on('message', async (message) => {
                         };
 
                         const results = await pollMessage.awaitReactions(filter, { time: 18000000 }) //5 hours in milliseconds 18000000
-                        pollMessage.delete(0);
+                        pollMessage.delete();
                         let score = 0;
                         let resultNum = 0;
                         //results
@@ -2181,22 +2255,22 @@ client.on('message', async (message) => {
             member.send(notiStreamerEmbed);
 
             updateChannel.send(`${notiRole} yo new stream!`).then( msg => {
-                msg.delete(0);
+                msg.delete();
             })
         }  
-        message.delete(0);            
+        message.delete();            
     }
 
     //HERE
     if(message.content.startsWith(`${prefix}play`)){
-        var songInput = splitmessagespace[0].substr(8);
+        var songInput = splitmessagespace[0].substr(7);
         var videoName = "video not found."
 
         function play(connection, message){
             var server = servers[serverID];
             let vidName = server.queueNames[0];
 
-            server.dispatcher = connection.playStream(ytdl(server.queue[0], {
+            server.dispatcher = connection.play(ytdl(server.queue[0], {
                 filter: "audioonly",
                 highWaterMark: 1 << 25,
 
@@ -2205,7 +2279,7 @@ client.on('message', async (message) => {
             server.queue.shift();
             server.queueNames.shift();
 
-            server.dispatcher.on("end", function(){
+            server.dispatcher.on("finish", function(){
                 if(server.queue[0]){
                     play(connection, message);
                 }
@@ -2225,7 +2299,7 @@ client.on('message', async (message) => {
 
             return channel.send(musicEmbed);
         }
-        else if(!sender.voiceChannel){
+        else if(!sender.voice.channel){
             return channel.send("Join a voice channel to witness my musical awesomeness! :saxophone:");
         }
         else{
@@ -2233,8 +2307,9 @@ client.on('message', async (message) => {
             if(!songInput.startsWith("https://www.youtube.com/watch?v=") && !songInput.startsWith("https://youtu.be/mKP8FnoIvrY")){
                 
             }*/
-            search(songInput, async function (err, r) {
-                var video = await r.videos[0];
+            var opts = { query: songInput }
+            search(opts, async function (err, r) {
+                var video = r.videos[0];
                 if(video === undefined){
                     return channel.send(`I could not find a song with the name **${songInput}**`)
                 }
@@ -2246,7 +2321,7 @@ client.on('message', async (message) => {
                 
                 let senderName = sender.user.username;
 
-                message.delete(0);
+                message.delete();
                 if(!servers[serverID]) servers[serverID] = {
                     queue: [],
                     queueNames: [],
@@ -2256,10 +2331,20 @@ client.on('message', async (message) => {
 
                 server.queue.push(songInput);
                 server.queueNames.push(videoName);
-                channel.send(`:trumpet: **${senderName}** has added **${videoName}** to the queue`)
 
-                if(!message.guild.voiceConnection){
-                    sender.voiceChannel.join().then(function(connection) {
+                let addedEmbed = new Discord.MessageEmbed() //ffmpeg
+                    .setColor(musicColor)
+                    .setAuthor(video.author.name.toLowerCase())
+                    .setTitle(':trumpet: ' + video.title)
+                    .setDescription(`**Veiws:** ${numberWithCommas(video.views)} | **Length:** ${video.timestamp} | **Date:** ${video.ago}`)
+                    .setImage(video.thumbnail)
+                    .setFooter(`added by ${senderName}`, sender.user.avatarURL())
+
+                channel.send(addedEmbed);
+                //channel.send(`:trumpet: **${senderName}** has added **${videoName}** to the queue`)
+
+                if(message.guild.voice.connection == undefined){
+                    sender.voice.channel.join().then(function(connection) {
                         play(connection, message);
                     })
                 }
@@ -2297,23 +2382,23 @@ client.on('message', async (message) => {
 
         if(server.dispatcher){
             channel.send(`**${skipperName}** has skipped the song`)
-            server.dispatcher.end();
+            server.dispatcher.destroy();
         }
     } 
 
     if(message.content.startsWith(`${prefix}leave`)){
         var server = servers[serverID];
-        if(message.guild.voiceConnection){
+        if(message.guild.voice.connection){
             for(var i = server.queue.length -1; i >= 0; i--){
                 server.queue.splice(i, 1);
             }
 
             channel.send("Ending the queue and disconnecting, the party's over! :wave:")
-            server.dispatcher.end();
+            server.dispatcher.destroy();
         }
 
-        if(message.guild.connection){
-            message.guild.voiceConnection.disconnect();
+        if(message.guild.voice.connection){
+            message.guild.voice.connection.disconnect();
         }
     } 
 
@@ -3345,7 +3430,7 @@ client.on('message', async (message) => {
                         deleteMessages();
 
                         async function deleteMessages(){
-                            await message.delete(0).then(async (deletedMes) => {
+                            await message.delete().then(async (deletedMes) => {
                                 channel.messages.fetch({ limit: deleteRealNum}).then( async (messages) => {
                             
                                     channel.bulkDelete(messages);
