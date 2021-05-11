@@ -2395,12 +2395,46 @@ client.on('message', async (message) => {
 
     if(message.content.startsWith(`${prefix}skip`)){
         var server = servers[serverID];
-        var sQueue = server.queueNames;
-        let skipperName = sender.user.username;
-
-        if(server.dispatcher){
-            channel.send(`**${skipperName}** has skipped the song`)
+        if(server.dispatcher != undefined){
+            var sQueue = server.queueNames;
+            let skipperName = sender.user.username;
             server.dispatcher.destroy();
+            server.queue.shift();
+            server.queueNames.shift();
+
+            function playSkipped(connection, message){
+                var server = servers[serverID];
+                let vidName = server.queueNames[0];
+    
+                server.dispatcher = connection.play(ytdl(server.queue[0], {
+                    filter: "audioonly",
+                    highWaterMark: 1 << 25,
+    
+                }));
+                channel.send(`🎯 **${skipperName}** has skipped the song!`);
+                channel.send(`:microphone2: Now playing **${vidName}!**`)
+                server.queue.shift();
+                server.queueNames.shift();
+    
+                server.dispatcher.on("finish", function(){
+                    if(server.queue[0]){
+                        play(connection, message);
+                    }
+                    else{
+                        channel.send(":skull: No more songs in the queue, party's over :()")
+                        connection.disconnect();
+                    }
+                });
+            }
+
+            if(message.guild.voice != undefined){
+                sender.voice.channel.join().then(function(connection) {
+                    playSkipped(connection, message);
+                })
+            }
+        }
+        else{
+            channel.send("I'm not even playing anything, you **scoundrel** >:D");
         }
     } 
 
