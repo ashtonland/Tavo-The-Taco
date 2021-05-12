@@ -2261,34 +2261,31 @@ client.on('message', async (message) => {
         message.delete();            
     }
 
-    //HERE
+    function play(connection, message){
+        var server = servers[serverID];
+        let vidName = server.queueNames[0];
+        if(vidName === undefined){
+            channel.send(":skull: No more songs in the queue, party's over :cry:")
+            return connection.disconnect();
+        }
+
+        server.dispatcher = connection.play(ytdl(server.queue[0], {
+            filter: "audioonly",
+            highWaterMark: 1 << 25,
+
+        }));
+        channel.send(`:microphone2: Now playing **${vidName}!**`)
+        server.queue.shift();
+        server.queueNames.shift();
+
+        server.dispatcher.on("finish", function(){
+            play(connection, message);
+        });
+    }
+
     if(message.content.startsWith(`${prefix}play`)){
         var songInput = splitmessagespace[0].substr(7);
         var videoName = "video not found."
-
-        function play(connection, message){
-            var server = servers[serverID];
-            let vidName = server.queueNames[0];
-
-            server.dispatcher = connection.play(ytdl(server.queue[0], {
-                filter: "audioonly",
-                highWaterMark: 1 << 25,
-
-            }));
-            channel.send(`:microphone2: Now playing **${vidName}!**`)
-            server.queue.shift();
-            server.queueNames.shift();
-
-            server.dispatcher.on("finish", function(){
-                if(server.queue[0]){
-                    play(connection, message);
-                }
-                else{
-                    channel.send(":skull: No more songs in the queue, party's over :()")
-                    connection.disconnect();
-                }
-            });
-        }
 
         if(songInput.length < 2){
             let musicEmbed = new Discord.MessageEmbed() //ffmpeg
@@ -2343,7 +2340,7 @@ client.on('message', async (message) => {
                 channel.send(addedEmbed);
                 //channel.send(`:trumpet: **${senderName}** has added **${videoName}** to the queue`)
 
-                if(message.guild.voice == undefined){
+                if(message.guild.voice == undefined || message.guild.voice.connection == undefined){
                     sender.voice.channel.join().then(function(connection) {
                         play(connection, message);
                     })
@@ -2359,7 +2356,7 @@ client.on('message', async (message) => {
         var sQueue = "";
         var queueItem;
 
-        if(server != undefined){
+        if(server != undefined && server.queueNames[0] != undefined){
             sQueue = server.queueNames;
             search({ query: server.queueNames[0] }, async function (err, r){
                 queueItem = r.videos[0].thumbnail;
@@ -2395,41 +2392,16 @@ client.on('message', async (message) => {
 
     if(message.content.startsWith(`${prefix}skip`)){
         var server = servers[serverID];
+
         if(server.dispatcher != undefined){
             var sQueue = server.queueNames;
             let skipperName = sender.user.username;
             server.dispatcher.destroy();
-            server.queue.shift();
-            server.queueNames.shift();
-
-            function playSkipped(connection, message){
-                var server = servers[serverID];
-                let vidName = server.queueNames[0];
-    
-                server.dispatcher = connection.play(ytdl(server.queue[0], {
-                    filter: "audioonly",
-                    highWaterMark: 1 << 25,
-    
-                }));
-                channel.send(`🎯 **${skipperName}** has skipped the song!`);
-                channel.send(`:microphone2: Now playing **${vidName}!**`)
-                server.queue.shift();
-                server.queueNames.shift();
-    
-                server.dispatcher.on("finish", function(){
-                    if(server.queue[0]){
-                        play(connection, message);
-                    }
-                    else{
-                        channel.send(":skull: No more songs in the queue, party's over :()")
-                        connection.disconnect();
-                    }
-                });
-            }
 
             if(message.guild.voice != undefined){
                 sender.voice.channel.join().then(function(connection) {
-                    playSkipped(connection, message);
+                    channel.send(`🎯 **${skipperName}** has skipped the song!`);
+                    play(connection, message);
                 })
             }
         }
