@@ -1,3 +1,8 @@
 config.json
 node_modules
 package-lock.json
+eco.json
+ecodata.txt
+guilds.json
+database.txt
+random-puppy.d.ts

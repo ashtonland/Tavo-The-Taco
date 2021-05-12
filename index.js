@@ -3,7 +3,7 @@ const { prefix, seperator, seperatorspace, token, bachosoftServerID, studioServe
 const client = new Discord.Client();
 const ytdl = require("ytdl-core");
 const search = require("yt-search");
-//const randomPuppy = require('random-puppy');
+const randomPuppy = require('random-puppy');
 const fs = require("fs");
 
 //databases
@@ -2048,7 +2048,7 @@ client.on('message', async (message) => {
             var final = new Array("1");
 
             let pollcreator = sender.user.username;
-            let question = splitmessagespace[0].substr(8);
+            let question = splitmessagespace[0].substr(7);
     
             splitmessagespace.shift(); //remove the ai/poll command from the array
     
@@ -2432,7 +2432,7 @@ client.on('message', async (message) => {
             let TrelloEmbed = new Discord.MessageEmbed()
                 .setColor('#1ad7ff')
                 .setTitle(':wolf: Project Trello Board')
-                .setDescription('The developer is either not working on a project right now \n or has not provided the trello link, this \n can be set in `ai/settings` by the owner or mods')
+                .setDescription('The developer is either not working on a project right now \n or has not provided the trello link, this \n can be set in `t/settings` by the owner or mods')
 
             return channel.send(TrelloEmbed);
         }
@@ -2458,7 +2458,7 @@ client.on('message', async (message) => {
             let updateEmbed = new Discord.MessageEmbed()
                 .setColor('#eead44')
                 .setTitle(':bell: Update Log')
-                .setDescription("the developer has not made any entries in the update logs *yet* \n this can be done with `ai/newupdate` by the owner or a mod")
+                .setDescription("the developer has not made any entries in the update logs *yet* \n this can be done with `t/newupdate` by the owner or a mod")
 
             return channel.send(updateEmbed);
         }
@@ -2481,7 +2481,7 @@ client.on('message', async (message) => {
     }
     //command list commands
     if(message.content.startsWith(`${prefix}help`)){
-        let helpInput = splitmessagespace[0].substr(8).toLowerCase();
+        let helpInput = splitmessagespace[0].substr(7).toLowerCase();
 
         if(helpInput === 'gen'){
             if(serverID === gameServerID){
@@ -2608,12 +2608,12 @@ client.on('message', async (message) => {
                 .setColor(standardColor)
                 .setTitle(':books: Help Catagories')
                 .setThumbnail(client.user.displayAvatarURL({ format: "png" }))
-                .addField(`**GENERAL**`, '`ai/help gen`', true)
-                .addField(`**DEV SERVER?**`, '`ai/help dev`', true)
-                .addField(`**ECONOMY**`, '`ai/help eco`', true)
-                .addField(`**RANKS**`, '`ai/help rank`', true)
-                .addField(`**MINI GAMES**`, '`ai/help game`', true)
-                .addField(`**MODERATIVE**`, '`ai/help mod`', true)
+                .addField(`**GENERAL**`, '`t/help gen`', true)
+                .addField(`**DEV SERVER?**`, '`t/help dev`', true)
+                .addField(`**ECONOMY**`, '`t/help eco`', true)
+                .addField(`**RANKS**`, '`t/help rank`', true)
+                .addField(`**MINI GAMES**`, '`t/help game`', true)
+                .addField(`**MODERATIVE**`, '`t/help mod`', true)
 
             return channel.send(genHelp);
         }
@@ -2756,7 +2756,7 @@ client.on('message', async (message) => {
     }
 
     if(message.content.startsWith(`${prefix}meme`)){
-        let posInput = (parseInt(splitmessagespace[0].substr(8))-1);
+        let posInput = (parseInt(splitmessagespace[0].substr(7))-1);
 
         const subReddits = ['wholesomememes', 'AdviceAnimals', 'MemeEconomy', 'dankmemes', 'PrequelMemes', 'terriblefacebookmemes', 'ComedyCemetery', 'memes', 'lastimages', 'okbuddyretard', 'me_irl'];
         let random = subReddits[Math.floor(Math.random() * subReddits.length)];
