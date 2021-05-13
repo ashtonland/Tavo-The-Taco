@@ -922,7 +922,7 @@ client.on('message', async (message) => {
 
                 //console.log(leadName[0]);
                 nameList[index] = leadName;
-                list[index] = `**${leadName} -** Net Worth: **${finalCoins[index].toString()}** :dollar:`
+                list[index] = `**${leadName} -** Net Worth: **${numberWithCommas(finalCoins[index]).toString()}** :dollar:`
             }
             //return console.log(nameList);
             let firstMem = message.guild.members.cache.find(member => member.user.username === nameList[0]);
@@ -1158,7 +1158,7 @@ client.on('message', async (message) => {
             else{ //user is mentioned
                 if(!ecoDatabase[member.id]){
                     ecoDatabase[member.id] = {
-                        Coins: 0,
+                        Coins: 500,
                         Expens: 0,
                         Clubs: ["none"],
                         Items: ["none"],
@@ -1831,8 +1831,8 @@ client.on('message', async (message) => {
             let conRate = 4;
             let levelCoins = rankLengthData * 3;
 
-            if(parseInt(splitmessagespace[0].substr(11)) >= 50){
-                let xpInput = parseInt(splitmessagespace[0].substr(11));
+            if(parseInt(splitmessagespace[0].substr(10)) >= 50){
+                let xpInput = parseInt(splitmessagespace[0].substr(10));
 
                 if(xpInput > currxp){
                     return channel.send("nope, you don't even have that much xp!");
@@ -1848,7 +1848,7 @@ client.on('message', async (message) => {
                     .setTitle(`:inbox_tray: XP to Coins Convertion`)
                     .addField(`**Stats**`, `**Bal -** ${numberWithCommas(currcoins)} coins \n **XP -** ${numberWithCommas(currxp)} | lvl ${currlvl}`, true)
                     .addField(`**Convertion Rate**`, `**Rate -** ${conRate} coins per 1 xp :arrow_up_small: \n **1 lvl -** ${numberWithCommas(levelCoins)} coins`, true)
-                    .addField(`**Calculations**`, `${xpInput} X ${conRate} \n **Gained Coins -** ${numberWithCommas(finalAdd)} coins`, false)
+                    .addField(`**Calculations**`, `${numberWithCommas(xpInput)} X ${conRate} \n **Gained Coins -** ${numberWithCommas(finalAdd)} coins`, false)
                     .addField(`**Confirm**`, `✅ **| Confirm Convertion**`, false)
                     .setFooter(`Don't loose all of it to bets!?`, sender.user.displayAvatarURL({ format: "png" }))
 
@@ -1869,7 +1869,7 @@ client.on('message', async (message) => {
                         let sentEmbed = new Discord.MessageEmbed()
                             .setColor(moneyColor)
                             .setTitle(`:bank: Convertion Complete`)
-                            .addField(`**Payment Info**`, `**Gained Coins -** ${numberWithCommas(finalAdd)} coins ✅ \n**Xp -** ${currxp - xpInput} xp \n **Balance -** ${currcoins + finalAdd} coins`, true)
+                            .addField(`**Payment Info**`, `**Gained Coins -** ${numberWithCommas(finalAdd)} coins ✅ \n**Xp -** ${numberWithCommas(currxp - xpInput)} xp \n **Balance -** ${numberWithCommas(currcoins + finalAdd)} coins`, true)
                             .setFooter(`Payment from ${sender.user.username}`, sender.user.displayAvatarURL({ format: "png" }));
 
                         return channel.send(sentEmbed);
@@ -1878,9 +1878,9 @@ client.on('message', async (message) => {
                         let cancelEmbed = new Discord.MessageEmbed()
                             .setColor(softRed)
                             .setTitle(`:bank: Convertion Cancelation`)
-                            .addField(`**Cancel Info**`, `**Amount -** ${xpInput} xp \n **Coin Value -** ${finalAdd}`, true)
+                            .addField(`**Cancel Info**`, `**Amount -** ${numberWithCommas(xpInput)} xp \n **Coin Value -** ${finalAdd}`, true)
                             .addField(`**Total Charge**`, `0 X 1` + ' `no Fees`' + ` \n **Total Charge -** 0 coins`, true)
-                            .addField(`**Your Balance**`, `**${currcoins} coins**`)
+                            .addField(`**Your Balance**`, `**${numberWithCommas(currcoins)} coins**`)
                             .setFooter(`${sender.user.username} canceled`, sender.user.displayAvatarURL({ format: "png" }));
 
                         return channel.send(cancelEmbed);
@@ -1897,7 +1897,7 @@ client.on('message', async (message) => {
                     .setTitle(`:inbox_tray: XP to Coins Convertion Info`)
                     .addField(`**Stats**`, `**Bal -** ${numberWithCommas(currcoins)} coins \n **XP -** ${numberWithCommas(currxp)} | lvl ${currlvl}`, true)
                     .addField(`**Convertion Rate**`, `**Rate -** ${conRate} coins per 1 xp :arrow_up_small: \n **1 lvl -** ${numberWithCommas(levelCoins)} coins`, true)
-                    .addField(`**How**`, `**ai/convert [amount]** \n type how many of your xp points you want to convert to coins`, false)
+                    .addField(`**How**`, `**t/convert [amount]** \n type how many of your xp points you want to convert to coins`, false)
                     .setFooter(`are the stocks up?`, sender.user.displayAvatarURL({ format: "png" }))
 
                 return channel.send(gamEmbed);
@@ -2352,6 +2352,7 @@ client.on('message', async (message) => {
 
     if(message.content.startsWith(`${prefix}queue`) || message.content.startsWith(`${prefix}q`)){
         var server = servers[serverID];
+        if(server = undefined) { return; }
         let final = ["the queue is empty"];
         var sQueue = "";
         var queueItem;
@@ -2392,6 +2393,7 @@ client.on('message', async (message) => {
 
     if(message.content.startsWith(`${prefix}skip`)){
         var server = servers[serverID];
+        if(server = undefined) { return; }
 
         if(server.dispatcher != undefined){
             var sQueue = server.queueNames;
