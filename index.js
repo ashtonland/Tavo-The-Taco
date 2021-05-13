@@ -1032,8 +1032,8 @@ client.on('message', async (message) => {
         }
         else if(message.content.startsWith(`${prefix}setlevel`)){
             if(sender.id === message.guild.ownerID || sender.roles.has(policeRoleId)){
-                if(parseInt(splitmessagespace[0].substr(12)) > 0){
-                    let levelSet = parseInt(splitmessagespace[0].substr(12));
+                if(parseInt(splitmessagespace[0].substr(11)) > 0){
+                    let levelSet = parseInt(splitmessagespace[0].substr(11));
 
                     if(levelSet > 100){
                         serverDatabase[serverID].RankLength = levelSet;
@@ -1254,10 +1254,10 @@ client.on('message', async (message) => {
                     return channel.send(`I will not allow for for such displays of madness, **how about ya give money to someone aside from yourself for once!**`)
                 }
 
-                let coinInput = parseInt(splitmessagespace[0].substr(12));
+                let coinInput = parseInt(splitmessagespace[0].substr(11));
                 
                 if(Number.isNaN(coinInput)){
-                    return channel.send("breh, provide an amount Ex. **ai/transfer 1069 @ebikdude**")
+                    return channel.send("breh, provide an amount Ex. **t/transfer 1069 @ebikdude**")
                 }
                 else if(coinInput > currcoins){
                     return channel.send("You don't even have that much money.");
@@ -1266,7 +1266,7 @@ client.on('message', async (message) => {
                 let howGiveEmbed = new Discord.MessageEmbed()
                     .setColor(moneyColor)
                     .setTitle(`:bank: Transfer Money - Choose Method`)
-                    .addField(`Bank`, "**:page_facing_up: | Capitol Union -** `15 mins, 15% tax` \n **:desktop: | BayBal -** `30 sec, 40% tax`")
+                    .addField(`Bank`, "**:page_facing_up: | Capitol Union -** `15 mins, 5% tax` \n **:desktop: | BayBal -** `30 sec, 20% tax`")
                     .addField(`Step 1`, `React with the coresponding emoji to choose a bank \n You have 20 seconds before the request is proccessed`)
                     .setFooter(`we have a strict no return policy...`, sender.user.displayAvatarURL({ format: "png" }))
 
@@ -1278,13 +1278,13 @@ client.on('message', async (message) => {
                     const bankResults = await sentEmbed.awaitReactions(filter, { time: 20000 })
                     
                     if (bankResults.has('📄')){
-                        let taxPer = 1.15;
+                        let taxPer = 1.05;
                         let finalCharge = Math.floor(coinInput * taxPer);
                         let amountEmbed = new Discord.MessageEmbed()
                             .setColor(moneyColor)
                             .setTitle(`:bank: Final Step: Confirm`)
                             .addField(`**Tranfer Info**`, `**Method -** Capitol Union \n **Recipient -** ${member.user.username} \n **Amount -** ${coinInput}`, true)
-                            .addField(`**Charge**`, `${coinInput} X ${taxPer}` + ' `15% Tax`' + ` \n **Your Total -** ${finalCharge} coins`, true)
+                            .addField(`**Charge**`, `${coinInput} X ${taxPer}` + ' `5% Tax`' + ` \n **Your Total -** ${finalCharge} coins`, true)
                             .addField(`**CONFIRM**`, `✅ **| Confirm Send Coins**`)
                             .setFooter(`If left empty, you will be charge a cancelation fee of 10%`, sender.user.displayAvatarURL({ format: "png" }));
 
@@ -1295,6 +1295,20 @@ client.on('message', async (message) => {
                             const confirmResults = await sentEmbed.awaitReactions(filter, { time: 900000 })
 
                             if (confirmResults.has('✅')){
+                                if(!ecoDatabase[member.id]){
+                                    ecoDatabase[member.id] = {
+                                        Coins: 0,
+                                        Expens: 0,
+                                        Clubs: ["none"],
+                                        Items: ["none"],
+                                        Multiplier: 0,
+                                        CardIm: 'dark',
+                                        BarCol: 'goldB',
+                                        CollectedDate: "0~0" //month day hours minutes
+                                    };
+                                    writeEcoData();
+                                }
+
                                 let newBal = currcoins - finalCharge;
                                 let newBalRep = ecoDatabase[member.id].Coins + coinInput;
 
@@ -1333,13 +1347,13 @@ client.on('message', async (message) => {
                         
                     }
                     if (bankResults.has('🖥️')){
-                        let taxPer = 1.40;
+                        let taxPer = 1.20;
                         let finalCharge = Math.floor(coinInput * taxPer);
                         let amountEmbed = new Discord.MessageEmbed()
                             .setColor(moneyColor)
                             .setTitle(`:bank: Final Step: Confirm`)
                             .addField(`**Tranfer Info**`, `**Method -** BayBal \n **Recipient -** ${member.user.username} \n **Amount -** ${coinInput}`, true) //here
-                            .addField(`**Charge**`, `${coinInput} X ${taxPer}` + ' `40% Tax`' + ` \n **Your Total -** ${finalCharge} coins`, true)
+                            .addField(`**Charge**`, `${coinInput} X ${taxPer}` + ' `20% Tax`' + ` \n **Your Total -** ${finalCharge} coins`, true)
                             .addField(`**CONFIRM**`, `✅ **| Confirm Send Coins**`)
                             .setFooter(`If left empty, you will be charge a cancelation fee of 10%`, sender.user.displayAvatarURL({ format: "png" }));
 
@@ -1350,6 +1364,20 @@ client.on('message', async (message) => {
                             const confirmResults = await sentEmbed.awaitReactions(filter, { time: 30000 })
 
                             if (confirmResults.has('✅')){
+                                if(!ecoDatabase[member.id]){
+                                    ecoDatabase[member.id] = {
+                                        Coins: 0,
+                                        Expens: 0,
+                                        Clubs: ["none"],
+                                        Items: ["none"],
+                                        Multiplier: 0,
+                                        CardIm: 'dark',
+                                        BarCol: 'goldB',
+                                        CollectedDate: "0~0" //month day hours minutes
+                                    };
+                                    writeEcoData();
+                                }
+                                
                                 let newBal = currcoins - finalCharge;
                                 let newBalRep = ecoDatabase[member.id].Coins + coinInput;
 

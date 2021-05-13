@@ -1,6 +1,6 @@
 {
     "626616845746831400": {
-        "Coins": 12938,
+        "Coins": 12506,
         "Expens": 300,
         "Clubs": [
             "Futuristic Visor Gang"
@@ -11,7 +11,7 @@
         "Multiplier": 0,
         "CardIm": "dark",
         "BarCol": "goldB",
-        "CollectedDate": "1620784099219~27014500675"
+        "CollectedDate": "1620784099219~27014601215"
     },
     "805890107194343457": {
         "Coins": 500,
@@ -180,5 +180,19 @@
         "CardIm": "dark",
         "BarCol": "goldB",
         "CollectedDate": "0~27014515060"
+    },
+    "566857451215912970": {
+        "Coins": 360,
+        "Expens": 0,
+        "Clubs": [
+            "none"
+        ],
+        "Items": [
+            "none"
+        ],
+        "Multiplier": 0,
+        "CardIm": "dark",
+        "BarCol": "goldB",
+        "CollectedDate": "0~0"
     }
 }
