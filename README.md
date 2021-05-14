@@ -21,7 +21,9 @@ Tavo is a discord bot with a fun economy system, levelling system, and some game
 
 ## In Progress
 - Updating to discordjs api v12 ⚠
-- Bug fixes, after these comes the cool stuff
+- More Items 🎉
+- Club System 🥳
+- Free Market 💰
 
 
 📫 _Have questions or want to see the bot? Join our <a href="https://discord.gg/TKh4nygEMG">server</a>_
