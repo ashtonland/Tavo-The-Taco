@@ -2269,9 +2269,11 @@ client.on('message', async (message) => {
         }));
         channel.send(`:microphone2: Now playing **${vidName}!**`)
         server.currUrl = server.queue[0]; //before it is removed
+        server.currName = server.queueNames[0];
 
         if(loopingServers.has(serverID)){
             server.queue.push(server.currUrl);
+            server.queueNames.push(server.currName);
         }
 
         server.queue.shift();
@@ -2301,6 +2303,7 @@ client.on('message', async (message) => {
                 //add it, turn loop on
                 loopingServers.set(serverID);
                 server.queue.push(server.currUrl);
+                server.queueNames.push(server.currName);
 
                 let loopEmbed = new Discord.MessageEmbed() //ffmpeg
                     .setColor(musicColor)
@@ -2356,6 +2359,7 @@ client.on('message', async (message) => {
                     queue: [],
                     queueNames: [],
                     currUrl: "",
+                    currName: "",
                 }
 
                 var server = servers[serverID];
