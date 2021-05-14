@@ -10,6 +10,9 @@ const fs = require("fs");
 let serverDatabase = require("./guilds.json");
 let ecoDatabase = require("./eco.json");
 
+//list of server ids which are playing loop
+var loopingServers = new Map()
+
 //canvas
 const Canvas = require('canvas');
 const { loadImage } = require("canvas");
@@ -317,7 +320,7 @@ client.on('message', async (message) => {
     let rankColor ='#52c5ff';
     
     //serverDatabase
-    let xp;
+    
     let adLevel;
 //#region Assign new servers and members to databases
     if(!serverDatabase[serverID]){ //create data for new servers
@@ -340,7 +343,7 @@ client.on('message', async (message) => {
     if(!ecoDatabase[sender.id]){
         if(!sender.user.bot){
             ecoDatabase[sender.id] = {
-                Coins: 0,
+                Coins: 200,
                 Expens: 0,
                 Clubs: ["none"],
                 Items: ["none"],
@@ -352,6 +355,42 @@ client.on('message', async (message) => {
             writeEcoData();
         }
     }
+
+    let xp = serverDatabase[serverID].xpData;
+    if(!xp[sender.id] && !sender.user.bot){
+        xp[sender.id] = {
+            name: sender.user.username,
+            xp: 0,
+            level: 1,
+        };
+    }
+    
+    if(member !== undefined){
+        if(!member.user.bot){ //adding mentions to database
+            if(!xp[member.id]){
+                xp[member.id] = {
+                    name: member.user.username,
+                    xp: 0,
+                    level: 1,
+                };
+            }
+        
+            if(!ecoDatabase[member.id]){
+                ecoDatabase[member.id] = {
+                    Coins: 200,
+                    Expens: 0,
+                    Clubs: ["none"],
+                    Items: ["none"],
+                    Multiplier: 0,
+                    CardIm: 'dark',
+                    BarCol: 'goldB',
+                    CollectedDate: "0~0" //month day hours minutes
+                };
+                writeEcoData();
+            }
+        }
+    }
+    
 //#endregion
 
 //#region Importing vars from databases
@@ -395,32 +434,30 @@ client.on('message', async (message) => {
     }
 //#endregion
 
-    //xp stuff
-    xp = serverDatabase[serverID].xpData;
     adLevel = serverDatabase[serverID].AdLevelPerm;
 
     if(!sender.user.bot){ //xp and economy stuff
-        if(message.content.startsWith(`${prefix}writeData`)){
+        if(message.content.startsWith(`${prefix}correctdata`)){
             if(sender.id === message.guild.ownerID || sender.id === '626616845746831400'){
                 for(i in ecoDatabase){
                     if(xp[i] === undefined){
-                        channel.send('`Checking if data for user: ' + `UNKNOWN. is correct` + '`');
+                        channel.send('`Checking if data for user: ' + `UNKNOWN. is correct` + '` :white_check_mark:');
                     }
                     else{
     
-                        channel.send('`Checking if data for user: ' + `${xp[i].name}. is correct` + '`');
+                        channel.send('`Checking if data for user: ' + `${xp[i].name}. is correct` + '` :white_check_mark:');
                     }
     
-                    if(!isNaN(ecoDatabase[i].CollectedDate)){ //the data is incorrect
-                        ecoDatabase[i].CollectedDate = `${ecoDatabase[i].CollectedDate}~0`;
+                    if(ecoDatabase[i].Coins === 0){ //the data is incorrect (check for changes here)
+                        ecoDatabase[i].Coins = 200;
                         writeEcoData();
     
                         if(xp[i] === undefined){
-                            channel.send('`Data has been re structured for: ' + `UNKNOWN. Set to ${ecoDatabase[i].CollectedDate}~0` + '`');
+                            channel.send('`Data has been re structured for: ' + `UNKNOWN. Set to ${ecoDatabase[i].Coins} (new default)` + '` :warning: -> :white_check_mark:');
                         }
                         else{
         
-                            channel.send('`Data has been re structured for: ' + `${xp[i].name}. Set to ${ecoDatabase[i].CollectedDate}~0` + '`');
+                            channel.send('`Data has been re structured for: ' + `${xp[i].name}. Coins set to ${ecoDatabase[i].Coins} (new default)` + '` :warning: -> :white_check_mark:');
                         }
                     }
                 }
@@ -428,14 +465,6 @@ client.on('message', async (message) => {
         }
         //rank stuff
         let xpAdd = betweenTwoNums(8, 18) //number between 7 and 15 [lowered]
-    
-        if(!xp[sender.user.id]){
-            xp[sender.id] = {
-                name: sender.user.username,
-                xp: 0,
-                level: 1,
-            };
-        }
         
         let currxp = xp[sender.user.id].xp;
         let currlvl = xp[sender.user.id].level;
@@ -461,14 +490,7 @@ client.on('message', async (message) => {
             if(ranksonData === false){
 
                 return ranksOffNotif();
-            }
-            /*
-            if(sender.id === '558431576036212741'){
-                //channel.send('how bout no');
-                //return channel.send("```js\n (node:8152) UnhandledPromiseRejectionWarning: Error: Server responded with 404 \n at get.concat (lib\\image.js:56:28) \n at concat (\\index.js:89:7) \n at IncomingMessage.<anonymous> (\\index.js:7:13) \n at Object.onceWrapper (events.js:286:20) \n at IncomingMessage.emit (events.js:203:15) \n at endReadableNT (_stream_readable.js:1145:12) \n at process._tickCallback (internal/process/next_tick.js:63:19) \n (node:8152) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). (rejection id: 1) \n (node:8152) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.```");
-            }*/
-
-            
+            }          
                 
             if(member === undefined){
 
@@ -624,29 +646,6 @@ client.on('message', async (message) => {
                 if(member.user.bot){
                     return channel.send(":cry: bots don't have xp bruh, now **scram!**");
                 }
-
-                if(!xp[member.id]){
-                    xp[member.id] = {
-                        name: member.user.username,
-                        xp: 0,
-                        level: 1,
-                    };
-                }
-
-                if(!ecoDatabase[member.id]){
-                    ecoDatabase[member.id] = {
-                        Coins: 0,
-                        Expens: 0,
-                        Clubs: ["none"],
-                        Items: ["none"],
-                        Multiplier: 0,
-                        CardIm: 'dark',
-                        BarCol: 'goldB',
-                        CollectedDate: "0~0" //month day hours minutes
-                    };
-                    writeEcoData();
-                }
-
 
                 let memberLvl = xp[member.id].level;
                 let memberXp = xp[member.id].xp;
@@ -922,7 +921,7 @@ client.on('message', async (message) => {
 
                 //console.log(leadName[0]);
                 nameList[index] = leadName;
-                list[index] = `**${leadName} -** Net Worth: **${finalCoins[index].toString()}** :dollar:`
+                list[index] = `**${leadName} -** Net Worth: **${numberWithCommas(finalCoins[index]).toString()}** :dollar:`
             }
             //return console.log(nameList);
             let firstMem = message.guild.members.cache.find(member => member.user.username === nameList[0]);
@@ -974,8 +973,8 @@ client.on('message', async (message) => {
                     await channel.send("```js\n function resetCallback (user.info) { \n Array<String>: 'Bot detected!'; reverting sequence output \n intecepted by external command: '#botshaverightslul' \n return launching new output statement from function \n command.override('bot'){console.error('output')}\n ```");
                     return channel.send(":robot: Bots are impervious to the reset!");
                 }
-                else if(!xp[member.id]){
-                    return channel.send(`${member.user.username} has never even gain xp or money before! Saved by being bad...`)
+                else if(xp[member.id].xp === 0){
+                    return channel.send(`${member.user.username} has never even gain xp before! Saved by being bad...`)
                 }
                 else{
                     let server = client.guilds.get(serverID);
@@ -997,7 +996,6 @@ client.on('message', async (message) => {
     
                         xp[member.id].xp = 0;
                         xp[member.id].level = 1;
-                        xp[member.id].coins = 0;
                     }
                     
                 }
@@ -1032,8 +1030,8 @@ client.on('message', async (message) => {
         }
         else if(message.content.startsWith(`${prefix}setlevel`)){
             if(sender.id === message.guild.ownerID || sender.roles.has(policeRoleId)){
-                if(parseInt(splitmessagespace[0].substr(12)) > 0){
-                    let levelSet = parseInt(splitmessagespace[0].substr(12));
+                if(parseInt(splitmessagespace[0].substr(11)) > 0){
+                    let levelSet = parseInt(splitmessagespace[0].substr(11));
 
                     if(levelSet > 100){
                         serverDatabase[serverID].RankLength = levelSet;
@@ -1148,7 +1146,7 @@ client.on('message', async (message) => {
                 let balaEmbed = new Discord.MessageEmbed()
                     .setColor(moneyColor)
                     .setTitle(`:moneybag: ${sender.user.username}'s Balance`)
-                    .addField(`STATS`, `**Coins -** ${currcoinsComma} :dollar: \n **Multiplier -** ${currmultiplier} \n **Level -** Lvl ${currlvl} :coin: \n **Expenses -** ${expenses} :outbox_tray:` + " `weekly`", true)
+                    .addField(`STATS`, `**Coins -** ${currcoinsComma} :dollar: \n **Multiplier -** ${currmultiplier} \n **Level -** Lvl ${currlvl} :military_medal:  \n **Expenses -** ${expenses} :outbox_tray:` + " `weekly`", true)
                     //.addField(`ITEMS`, `${itemFinal.join('\n')}`, true)
                     .addField(`CLUBS`, `${final.join('\n')}`, true)
                     .setFooter(`loaded on ${month}/${day}/${year}`, sender.user.avatarURL())
@@ -1156,51 +1154,41 @@ client.on('message', async (message) => {
                 channel.send(balaEmbed);
             }
             else{ //user is mentioned
-                if(!ecoDatabase[member.id]){
-                    ecoDatabase[member.id] = {
-                        Coins: 0,
-                        Expens: 0,
-                        Clubs: ["none"],
-                        Items: ["none"],
-                        Multiplier: 0,
-                        CardIm: 'dark',
-                        BarCol: 'goldB',
-                        CollectedDate: 0 //month day hours minutes
-                    };
-                    writeEcoData();
-                }
 
                 let memberCoins = ecoDatabase[member.id].Coins;
                 let memexpenses = ecoDatabase[member.id].Expens;
                 let memclubs = ecoDatabase[member.id].Clubs;
-                let memItems = ecoDatabase[member.id].Items;
+                let memberLvl = xp[member.id].level;
+                //let memItems = ecoDatabase[member.id].Items;
                 let memMultiplier = ecoDatabase[member.id].Multiplier;
 
                 let currcoinsComma = numberWithCommas(memberCoins);
                 let final = ["none"];
-                let itemFinal = ["none"];
+                //let itemFinal = ["none"];
     
                 if(memberCoins < 0){
                     currcoinsComma = currcoinsComma + " `in debt`";
                 }
     
                 for (let index = 0; index < memclubs.length; index++) {
-                    if(!memclubs[index] === 'none'){
-                        final[index] = `**- ${memclubs[index]}**`;
+                    if(memclubs[index] != 'none'){
+                        final[index] = `**${index + 1}.** ${memclubs[index]}`;
                     }
                 }
+                /*
                 for (let index = 0; index < memItems.length; index++) {
                     if(memItems[index] != "none"){
                         itemFinal[index] = `**- ${memItems[index]}**`;
                     }
-                }
+                }*/
     
                 let balaEmbed = new Discord.MessageEmbed()
                     .setColor(moneyColor)
                     .setTitle(`:moneybag: ${member.user.username}'s Balance`)
-                    .addField(`STATS`, `**Coins -** ${currcoinsComma} \n **Multiplier -** ${memMultiplier} \n **Expenses -** ${memexpenses}` + " `weekly total`")
-                    .addField(`ITEMS`, `${itemFinal.join('\n')}`)
-                    .addField(`CLUBS`, `${final.join('\n')}`)
+                    .addField(`STATS`, `**Coins -** ${currcoinsComma} :dollar: \n **Multiplier -** ${memMultiplier} \n **Level -** Lvl ${memberLvl} :military_medal:  \n **Expenses -** ${memexpenses} :outbox_tray: ` + " `weekly total`", true)
+                    //.addField(`ITEMS`, `${itemFinal.join('\n')}`)
+                    .addField(`CLUBS`, `${final.join('\n')}`, true)
+                    .setFooter(`loaded on ${month}/${day}/${year}`, member.user.avatarURL())
     
                 channel.send(balaEmbed);
             }
@@ -1227,7 +1215,7 @@ client.on('message', async (message) => {
                 let dailyEmbed = new Discord.MessageEmbed()
                     .setColor(moneyColor)
                     .setTitle(`:dollar: ${sender.user.username}'s Daily Coins!`)
-                    .addField(`MAFS`, `**daily -** ${coinsAdd} **multiplier -** ${currmultiplier}`)
+                    .addField(`MAFS`, `**daily -** ${coinsAdd}  **|  multiplier -** ${currmultiplier}`)
                     .addField(`TOTAL`, `You gained ${totalAdd} coins today! :white_check_mark:`)
                     .setFooter(`pay day!`)
 
@@ -1254,10 +1242,10 @@ client.on('message', async (message) => {
                     return channel.send(`I will not allow for for such displays of madness, **how about ya give money to someone aside from yourself for once!**`)
                 }
 
-                let coinInput = parseInt(splitmessagespace[0].substr(12));
+                let coinInput = parseInt(splitmessagespace[0].substr(11));
                 
                 if(Number.isNaN(coinInput)){
-                    return channel.send("breh, provide an amount Ex. **ai/transfer 1069 @ebikdude**")
+                    return channel.send("breh, provide an amount Ex. **t/transfer 1060 @ebikdude**")
                 }
                 else if(coinInput > currcoins){
                     return channel.send("You don't even have that much money.");
@@ -1266,7 +1254,7 @@ client.on('message', async (message) => {
                 let howGiveEmbed = new Discord.MessageEmbed()
                     .setColor(moneyColor)
                     .setTitle(`:bank: Transfer Money - Choose Method`)
-                    .addField(`Bank`, "**:page_facing_up: | Capitol Union -** `15 mins, 15% tax` \n **:desktop: | BayBal -** `30 sec, 40% tax`")
+                    .addField(`Bank`, "**:page_facing_up: | Capitol Union -** `15 mins, 5% tax` \n **:desktop: | BayBal -** `30 sec, 20% tax`")
                     .addField(`Step 1`, `React with the coresponding emoji to choose a bank \n You have 20 seconds before the request is proccessed`)
                     .setFooter(`we have a strict no return policy...`, sender.user.displayAvatarURL({ format: "png" }))
 
@@ -1278,13 +1266,13 @@ client.on('message', async (message) => {
                     const bankResults = await sentEmbed.awaitReactions(filter, { time: 20000 })
                     
                     if (bankResults.has('📄')){
-                        let taxPer = 1.15;
+                        let taxPer = 1.05;
                         let finalCharge = Math.floor(coinInput * taxPer);
                         let amountEmbed = new Discord.MessageEmbed()
                             .setColor(moneyColor)
                             .setTitle(`:bank: Final Step: Confirm`)
-                            .addField(`**Tranfer Info**`, `**Method -** Capitol Union \n **Recipient -** ${member.user.username} \n **Amount -** ${coinInput}`, true)
-                            .addField(`**Charge**`, `${coinInput} X ${taxPer}` + ' `15% Tax`' + ` \n **Your Total -** ${finalCharge} coins`, true)
+                            .addField(`**Tranfer Info**`, `**Method -** Capitol Union \n **Recipient -** ${member.user.username} \n **Amount -** ${coinInput} :inbox_tray:`, true)
+                            .addField(`**Charge**`, `${coinInput} X ${taxPer}` + ' `5% Tax`' + ` \n **Your Total -** ${finalCharge} :outbox_tray:`, true)
                             .addField(`**CONFIRM**`, `✅ **| Confirm Send Coins**`)
                             .setFooter(`If left empty, you will be charge a cancelation fee of 10%`, sender.user.displayAvatarURL({ format: "png" }));
 
@@ -1295,6 +1283,7 @@ client.on('message', async (message) => {
                             const confirmResults = await sentEmbed.awaitReactions(filter, { time: 900000 })
 
                             if (confirmResults.has('✅')){
+
                                 let newBal = currcoins - finalCharge;
                                 let newBalRep = ecoDatabase[member.id].Coins + coinInput;
 
@@ -1305,8 +1294,8 @@ client.on('message', async (message) => {
                                 let sentEmbed = new Discord.MessageEmbed()
                                     .setColor(moneyColor)
                                     .setTitle(`:bank: Coins Sent To ${member.user.username}`)
-                                    .addField(`**${sender.user.username}'s Info**`, `**Charged -** ${finalCharge} coins \n **Balance -** ${newBal} coins`, true)
-                                    .addField(`**${member.user.username}'s Info**`, `**Recieved -** ${coinInput} coins \n **Balance -** ${newBalRep} coins ✅`, true)
+                                    .addField(`**${sender.user.username}'s Info**`, `**Charged -** ${finalCharge} coins \n **Balance -** ${newBal} :dollar:`, true)
+                                    .addField(`**${member.user.username}'s Info**`, `**Recieved -** ${coinInput} coins \n **Balance -** ${newBalRep} :dollar:`, true)
                                     .setFooter(`from ${sender.user.username}`, sender.user.displayAvatarURL({ format: "png" }));
         
                                 return channel.send(sentEmbed);
@@ -1333,13 +1322,13 @@ client.on('message', async (message) => {
                         
                     }
                     if (bankResults.has('🖥️')){
-                        let taxPer = 1.40;
+                        let taxPer = 1.20;
                         let finalCharge = Math.floor(coinInput * taxPer);
                         let amountEmbed = new Discord.MessageEmbed()
                             .setColor(moneyColor)
                             .setTitle(`:bank: Final Step: Confirm`)
-                            .addField(`**Tranfer Info**`, `**Method -** BayBal \n **Recipient -** ${member.user.username} \n **Amount -** ${coinInput}`, true) //here
-                            .addField(`**Charge**`, `${coinInput} X ${taxPer}` + ' `40% Tax`' + ` \n **Your Total -** ${finalCharge} coins`, true)
+                            .addField(`**Tranfer Info**`, `**Method -** BayBal \n **Recipient -** ${member.user.username} \n **Amount -** ${coinInput} :inbox_tray:`, true) //here
+                            .addField(`**Charge**`, `${coinInput} X ${taxPer}` + ' `20% Tax`' + ` \n **Your Total -** ${finalCharge} coins :outbox_tray:`, true)
                             .addField(`**CONFIRM**`, `✅ **| Confirm Send Coins**`)
                             .setFooter(`If left empty, you will be charge a cancelation fee of 10%`, sender.user.displayAvatarURL({ format: "png" }));
 
@@ -1350,6 +1339,7 @@ client.on('message', async (message) => {
                             const confirmResults = await sentEmbed.awaitReactions(filter, { time: 30000 })
 
                             if (confirmResults.has('✅')){
+                                
                                 let newBal = currcoins - finalCharge;
                                 let newBalRep = ecoDatabase[member.id].Coins + coinInput;
 
@@ -1360,8 +1350,8 @@ client.on('message', async (message) => {
                                 let sentEmbed = new Discord.MessageEmbed()
                                     .setColor(moneyColor)
                                     .setTitle(`:bank: Coins Sent To ${member.user.username}`)
-                                    .addField(`**${sender.user.username}'s Info**`, `**Charged -** ${finalCharge} coins \n **Balance -** ${newBal} coins`, true)
-                                    .addField(`**${member.user.username}'s Info**`, `**Recieved -** ${coinInput} coins \n **Balance -** ${newBalRep} coins ✅`, true)
+                                    .addField(`**${sender.user.username}'s Info**`, `**Charged -** ${finalCharge} coins \n **Balance -** ${newBal} :dollar:`, true)
+                                    .addField(`**${member.user.username}'s Info**`, `**Recieved -** ${coinInput} coins \n **Balance -** ${newBalRep} :dollar:`, true)
                                     .setFooter(`from ${sender.user.username}`, sender.user.displayAvatarURL({ format: "png" }));
         
                                 return channel.send(sentEmbed);
@@ -1558,7 +1548,7 @@ client.on('message', async (message) => {
 
             let shopEmbed = new Discord.MessageEmbed()
                 .setColor(moneyColor)
-                .setTitle(`:shopping_bags: Astrobe Shop`)
+                .setTitle(`:shopping_bags: Tavo Shop`)
                 .setDescription(`**Bal -** ${currcoinsComma} coins` + "\n `ai/buy [item name]`")
                 .addField(`**:gem: ITEMS**`, "**ai/shop items**", true)
                 .addField(`**:bar_chart: RANK CARD**`, "**ai/shop cards**", true)
@@ -1618,7 +1608,7 @@ client.on('message', async (message) => {
 
             let shopEmbed = new Discord.MessageEmbed()
                 .setColor(moneyColor)
-                .setTitle(`:shopping_bags: Astrobe Shop: Rank Cards`)
+                .setTitle(`:shopping_bags: Tavo Shop: Rank Cards`)
                 .setDescription(`**Bal -** ${currcoinsComma} coins` + "\n `ai/buy [item name]`")
                 .addField(`**:yellow_square: BAR COLORS**`, `${finalColors.join("\n")}`, true)
                 .addField(`**:frame_photo: BACKGROUND**`, `${finalBacks.join("\n")}`, true)
@@ -1712,7 +1702,7 @@ client.on('message', async (message) => {
                     .setColor(moneyColor)
                     .setTitle(':shopping_cart: How to Buy Items:')
                     .addField(`**About**`, `Use this command to buy any item from the shop \n Ex. **ai/buy credit card**`, true)
-                    .addField(`**How**`, `**- ai/buy [item name]** call the command and then \n the item's that you want to buy name`, true)
+                    .addField(`**How**`, `**- t/buy [item name]** call the command and then \n the item's that you want to buy name`, true)
                     .setFooter("There is always a confirm purchase!")
     
                 return channel.send(buyEmbed);
@@ -1820,6 +1810,9 @@ client.on('message', async (message) => {
                     
                 })
             }
+            else{
+                return ErrorEmbed(`${itemInput} is not an item in the shop`);
+            }
 
         }
         else if(message.content.startsWith(`${prefix}convert`)){
@@ -1831,11 +1824,11 @@ client.on('message', async (message) => {
             let conRate = 4;
             let levelCoins = rankLengthData * 3;
 
-            if(parseInt(splitmessagespace[0].substr(11)) >= 50){
-                let xpInput = parseInt(splitmessagespace[0].substr(11));
+            if(parseInt(splitmessagespace[0].substr(10)) >= 50){
+                let xpInput = parseInt(splitmessagespace[0].substr(10));
 
                 if(xpInput > currxp){
-                    return channel.send("nope, you don't even have that much xp!");
+                    return channel.send("sneaky slime ball! You don't even have that much xp!");
                 }
                 else if(xpInput == currxp){
                     channel.send("All in, just how I like it!");
@@ -1848,7 +1841,7 @@ client.on('message', async (message) => {
                     .setTitle(`:inbox_tray: XP to Coins Convertion`)
                     .addField(`**Stats**`, `**Bal -** ${numberWithCommas(currcoins)} coins \n **XP -** ${numberWithCommas(currxp)} | lvl ${currlvl}`, true)
                     .addField(`**Convertion Rate**`, `**Rate -** ${conRate} coins per 1 xp :arrow_up_small: \n **1 lvl -** ${numberWithCommas(levelCoins)} coins`, true)
-                    .addField(`**Calculations**`, `${xpInput} X ${conRate} \n **Gained Coins -** ${numberWithCommas(finalAdd)} coins`, false)
+                    .addField(`**Calculations**`, `${numberWithCommas(xpInput)} X ${conRate} \n **Gained Coins -** ${numberWithCommas(finalAdd)} coins`, false)
                     .addField(`**Confirm**`, `✅ **| Confirm Convertion**`, false)
                     .setFooter(`Don't loose all of it to bets!?`, sender.user.displayAvatarURL({ format: "png" }))
 
@@ -1869,7 +1862,7 @@ client.on('message', async (message) => {
                         let sentEmbed = new Discord.MessageEmbed()
                             .setColor(moneyColor)
                             .setTitle(`:bank: Convertion Complete`)
-                            .addField(`**Payment Info**`, `**Gained Coins -** ${numberWithCommas(finalAdd)} coins ✅ \n**Xp -** ${currxp - xpInput} xp \n **Balance -** ${currcoins + finalAdd} coins`, true)
+                            .addField(`**Payment Info**`, `**Gained Coins -** ${numberWithCommas(finalAdd)} coins ✅ \n**Xp -** ${numberWithCommas(currxp - xpInput)} xp \n **Balance -** ${numberWithCommas(currcoins + finalAdd)} coins`, true)
                             .setFooter(`Payment from ${sender.user.username}`, sender.user.displayAvatarURL({ format: "png" }));
 
                         return channel.send(sentEmbed);
@@ -1878,9 +1871,9 @@ client.on('message', async (message) => {
                         let cancelEmbed = new Discord.MessageEmbed()
                             .setColor(softRed)
                             .setTitle(`:bank: Convertion Cancelation`)
-                            .addField(`**Cancel Info**`, `**Amount -** ${xpInput} xp \n **Coin Value -** ${finalAdd}`, true)
+                            .addField(`**Cancel Info**`, `**Amount -** ${numberWithCommas(xpInput)} xp \n **Coin Value -** ${finalAdd}`, true)
                             .addField(`**Total Charge**`, `0 X 1` + ' `no Fees`' + ` \n **Total Charge -** 0 coins`, true)
-                            .addField(`**Your Balance**`, `**${currcoins} coins**`)
+                            .addField(`**Your Balance**`, `**${numberWithCommas(currcoins)} coins**`)
                             .setFooter(`${sender.user.username} canceled`, sender.user.displayAvatarURL({ format: "png" }));
 
                         return channel.send(cancelEmbed);
@@ -1897,7 +1890,7 @@ client.on('message', async (message) => {
                     .setTitle(`:inbox_tray: XP to Coins Convertion Info`)
                     .addField(`**Stats**`, `**Bal -** ${numberWithCommas(currcoins)} coins \n **XP -** ${numberWithCommas(currxp)} | lvl ${currlvl}`, true)
                     .addField(`**Convertion Rate**`, `**Rate -** ${conRate} coins per 1 xp :arrow_up_small: \n **1 lvl -** ${numberWithCommas(levelCoins)} coins`, true)
-                    .addField(`**How**`, `**ai/convert [amount]** \n type how many of your xp points you want to convert to coins`, false)
+                    .addField(`**How**`, `**t/convert [amount]** \n type how many of your xp points you want to convert to coins`, false)
                     .setFooter(`are the stocks up?`, sender.user.displayAvatarURL({ format: "png" }))
 
                 return channel.send(gamEmbed);
@@ -2275,12 +2268,55 @@ client.on('message', async (message) => {
 
         }));
         channel.send(`:microphone2: Now playing **${vidName}!**`)
+        server.currUrl = server.queue[0]; //before it is removed
+        server.currName = server.queueNames[0];
+
+        if(loopingServers.has(serverID)){
+            server.queue.push(server.currUrl);
+            server.queueNames.push(server.currName);
+        }
+
         server.queue.shift();
         server.queueNames.shift();
 
         server.dispatcher.on("finish", function(){
             play(connection, message);
         });
+    }
+
+    if(message.content.startsWith(`${prefix}loop`)){
+        if(message.guild.voice != undefined){
+            var server = servers[serverID];
+
+            if(loopingServers.has(serverID)){
+                //already looping, turn it off
+                loopingServers.delete(serverID);
+
+                let loopEmbed = new Discord.MessageEmbed() //ffmpeg
+                    .setColor(musicColor)
+                    .setAuthor(sender.user.username, sender.user.avatarURL())
+                    .setTitle('Just turned off loop! :flushed:')
+
+                channel.send(loopEmbed);
+            }
+            else{
+                //add it, turn loop on
+                loopingServers.set(serverID);
+                server.queue.push(server.currUrl);
+                server.queueNames.push(server.currName);
+
+                let loopEmbed = new Discord.MessageEmbed() //ffmpeg
+                    .setColor(musicColor)
+                    .setAuthor(sender.user.username, sender.user.avatarURL())
+                    .setTitle('Just turned on loop! :drum:')
+                    
+
+                channel.send(loopEmbed);
+            }
+        }
+        else{
+            channel.send(":disappointed_relieved: I won't commit such crimes againt humanity sir... *looping* ***no music?!?!?!?!***")
+        }
     }
 
     if(message.content.startsWith(`${prefix}play`)){
@@ -2292,7 +2328,7 @@ client.on('message', async (message) => {
                 .setColor(musicColor)
                 .setTitle(':saxophone: How to play music:')
                 .setDescription(`- Join a voice channel in the server first \n- Type the command followed by a space and the name of the song or a youtube link the the song \n **Ex. ${prefix}play astronomia**`)
-                .setFooter("commands: play, pause, skip, queue")
+                .setFooter("commands: play, pause, skip, queue, loop")
 
             return channel.send(musicEmbed);
         }
@@ -2322,6 +2358,8 @@ client.on('message', async (message) => {
                 if(!servers[serverID]) servers[serverID] = {
                     queue: [],
                     queueNames: [],
+                    currUrl: "",
+                    currName: "",
                 }
 
                 var server = servers[serverID];
@@ -2352,6 +2390,7 @@ client.on('message', async (message) => {
 
     if(message.content.startsWith(`${prefix}queue`) || message.content.startsWith(`${prefix}q`)){
         var server = servers[serverID];
+        if(server == undefined) { return; }
         let final = ["the queue is empty"];
         var sQueue = "";
         var queueItem;
@@ -2370,7 +2409,7 @@ client.on('message', async (message) => {
                         .setTitle(':saxophone: Music Queue')
                         .setImage(queueItem)
                         .setDescription("**Up next:** \n" + final.join("\n"))
-                        .setFooter("commands: play, skip, queue, leave")
+                        .setFooter("commands: play, skip, queue, leave, loop")
         
                 return channel.send(queueEmbed);
             })
@@ -2384,7 +2423,7 @@ client.on('message', async (message) => {
                     .setColor(musicColor)
                     .setTitle(':saxophone: Music Queue')
                     .setDescription("**Up next:** \n" + final.join("\n"))
-                    .setFooter("commands: play, skip, queue, leave")
+                    .setFooter("commands: play, skip, queue, leave, loop")
     
             return channel.send(queueEmbed);
         }    
@@ -2392,6 +2431,7 @@ client.on('message', async (message) => {
 
     if(message.content.startsWith(`${prefix}skip`)){
         var server = servers[serverID];
+        if(server == undefined) { return; }
 
         if(server.dispatcher != undefined){
             var sQueue = server.queueNames;
