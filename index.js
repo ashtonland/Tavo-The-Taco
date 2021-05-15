@@ -1621,7 +1621,7 @@ client.on('message', async (message) => {
                 return ranksOffNotif();
             }
 
-            var itemInput = splitmessagespace[0].substr(11);
+            var itemInput = splitmessagespace[0].substr(10);
 
             if(itemInput.length < 1){
                 let cusEmbed = new Discord.MessageEmbed() //C:\ffmpeg\bin
@@ -1658,7 +1658,7 @@ client.on('message', async (message) => {
                 return ranksOffNotif();
             }
 
-            var itemInput = splitmessagespace[0].substr(10);
+            var itemInput = splitmessagespace[0].substr(9);
 
             if(itemInput.length < 1){
                 let cusEmbed = new Discord.MessageEmbed() //C:\ffmpeg\bin

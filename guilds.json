@@ -1,3 +1,166 @@
 {
-    
+    "787153628934438913": {
+        "xpData": {
+            "626616845746831400": {
+                "name": "Treixatek",
+                "xp": 374,
+                "level": 1
+            },
+            "387630937510248449": {
+                "name": "Atomic Potato",
+                "xp": 10,
+                "level": 1
+            },
+            "805890107194343457": {
+                "name": "mkl!",
+                "xp": 0,
+                "level": 1
+            }
+        },
+        "reactionMesIDs": {},
+        "AdLevelPerm": 2,
+        "AdChannelID": "not set",
+        "ModRoleID": "not set",
+        "LogChannelID": "not set",
+        "TrelloLink": "not set",
+        "LastUpdate": "not set",
+        "RankLength": 400,
+        "ranksOn": true
+    },
+    "714933286001967207": {
+        "xpData": {
+            "503232711478083595": {
+                "name": "Blueberry Mauro ◈",
+                "xp": 39,
+                "level": 1
+            },
+            "387630937510248449": {
+                "name": "Atomic Potato",
+                "xp": 42,
+                "level": 1
+            },
+            "725042428532359218": {
+                "name": "Big Boi Games",
+                "xp": 16,
+                "level": 1
+            },
+            "515634918500335636": {
+                "name": "adude",
+                "xp": 225,
+                "level": 1
+            },
+            "689584183743348821": {
+                "name": "jaxx",
+                "xp": 23,
+                "level": 1
+            },
+            "748895891473301607": {
+                "name": "In_jail_out_soon!",
+                "xp": 11,
+                "level": 1
+            },
+            "649049087852806155": {
+                "name": "Alpha_Enaz",
+                "xp": 147,
+                "level": 1
+            },
+            "707990641979818066": {
+                "name": "Not an apple, a stone",
+                "xp": 77,
+                "level": 1
+            },
+            "653692920192434207": {
+                "name": "Pommpeii",
+                "xp": 261,
+                "level": 1
+            },
+            "594587612820537347": {
+                "name": "ChillMercury840",
+                "xp": 23,
+                "level": 1
+            },
+            "719998301990027366": {
+                "name": "DavidDevsDumbStuff",
+                "xp": 81,
+                "level": 1
+            },
+            "487745945031802887": {
+                "name": "TJ_",
+                "xp": 248,
+                "level": 1
+            },
+            "566857451215912970": {
+                "name": "i am potato._.",
+                "xp": 146,
+                "level": 1
+            },
+            "789633297985699871": {
+                "name": "notorious wall street crasher",
+                "xp": 31,
+                "level": 1
+            },
+            "754423246106918992": {
+                "name": "demon!",
+                "xp": 15,
+                "level": 1
+            }
+        },
+        "reactionMesIDs": {},
+        "AdLevelPerm": 2,
+        "AdChannelID": "not set",
+        "ModRoleID": "not set",
+        "LogChannelID": "not set",
+        "TrelloLink": "not set",
+        "LastUpdate": "not set",
+        "RankLength": 400,
+        "ranksOn": true
+    },
+    "626620183405920276": {
+        "xpData": {
+            "626616845746831400": {
+                "name": "Trei",
+                "xp": 1433,
+                "level": 4
+            },
+            "805890107194343457": {
+                "name": "Ozzie Osbourne",
+                "xp": 71,
+                "level": 1
+            },
+            "701146789348376607": {
+                "name": "Spooky Man",
+                "xp": 126,
+                "level": 1
+            },
+            "273204124831580161": {
+                "name": "deatharix",
+                "xp": 25,
+                "level": 1
+            },
+            "733665813785083925": {
+                "name": "mkl",
+                "xp": 0,
+                "level": 1
+            },
+            "758064917390557316": {
+                "name": "Winston Churchill",
+                "xp": 0,
+                "level": 1
+            },
+            "816815858600509460": {
+                "name": "AnAxolotl",
+                "xp": 12,
+                "level": 1
+            }
+        },
+        "reactionMesIDs": {},
+        "AdLevelPerm": 2,
+        "AdChannelID": "not set",
+        "ModRoleID": "not set",
+        "LogChannelID": "not set",
+        "TrelloLink": "not set",
+        "LastUpdate": "not set",
+        "RankLength": 400,
+        "ranksOn": true
+    }
 }
