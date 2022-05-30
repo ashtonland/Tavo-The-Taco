@@ -31,7 +31,7 @@
         "xpData": {
             "503232711478083595": {
                 "name": "Blueberry Mauro ◈",
-                "xp": 27,
+                "xp": 39,
                 "level": 1
             },
             "387630937510248449": {
@@ -46,8 +46,8 @@
             },
             "515634918500335636": {
                 "name": "adude",
-                "xp": 139,
-                "level": 1
+                "xp": 417,
+                "level": 2
             },
             "689584183743348821": {
                 "name": "jaxx",
@@ -61,22 +61,72 @@
             },
             "649049087852806155": {
                 "name": "Alpha_Enaz",
-                "xp": 131,
+                "xp": 147,
                 "level": 1
             },
             "707990641979818066": {
                 "name": "Not an apple, a stone",
-                "xp": 17,
+                "xp": 104,
                 "level": 1
             },
             "653692920192434207": {
                 "name": "Pommpeii",
-                "xp": 8,
+                "xp": 277,
                 "level": 1
             },
             "594587612820537347": {
                 "name": "ChillMercury840",
-                "xp": 9,
+                "xp": 23,
+                "level": 1
+            },
+            "719998301990027366": {
+                "name": "DavidDevsDumbStuff",
+                "xp": 123,
+                "level": 1
+            },
+            "487745945031802887": {
+                "name": "TJ_",
+                "xp": 362,
+                "level": 1
+            },
+            "566857451215912970": {
+                "name": "i am potato._.",
+                "xp": 146,
+                "level": 1
+            },
+            "789633297985699871": {
+                "name": "notorious wall street crasher",
+                "xp": 31,
+                "level": 1
+            },
+            "754423246106918992": {
+                "name": "demon!",
+                "xp": 15,
+                "level": 1
+            },
+            "613102122061398027": {
+                "name": "AstroTurffx",
+                "xp": 20,
+                "level": 1
+            },
+            "657366823750336538": {
+                "name": "OllyC_",
+                "xp": 17,
+                "level": 1
+            },
+            "726929216188186665": {
+                "name": "Snowyy",
+                "xp": 13,
+                "level": 1
+            },
+            "626616845746831400": {
+                "name": "Trei",
+                "xp": 16,
+                "level": 1
+            },
+            "715229260650119241": {
+                "name": "Gelis07",
+                "xp": 31,
                 "level": 1
             }
         },
@@ -94,12 +144,12 @@
         "xpData": {
             "626616845746831400": {
                 "name": "Trei",
-                "xp": 1272,
-                "level": 4
+                "xp": 2988,
+                "level": 8
             },
             "805890107194343457": {
                 "name": "Ozzie Osbourne",
-                "xp": 33,
+                "xp": 79,
                 "level": 1
             },
             "701146789348376607": {
@@ -110,6 +160,89 @@
             "273204124831580161": {
                 "name": "deatharix",
                 "xp": 25,
+                "level": 1
+            },
+            "733665813785083925": {
+                "name": "mkl",
+                "xp": 0,
+                "level": 1
+            },
+            "758064917390557316": {
+                "name": "Winston Churchill",
+                "xp": 0,
+                "level": 1
+            },
+            "816815858600509460": {
+                "name": "AnAxolotl",
+                "xp": 692,
+                "level": 2
+            },
+            "560362610894307328": {
+                "name": "Luma",
+                "xp": 32,
+                "level": 1
+            },
+            "566857451215912970": {
+                "name": "i am potato._.",
+                "xp": 0,
+                "level": 1
+            },
+            "517420876673843211": {
+                "name": "SIRI",
+                "xp": 202,
+                "level": 1
+            },
+            "484093019860238346": {
+                "name": "JesusInder",
+                "xp": 36,
+                "level": 1
+            }
+        },
+        "reactionMesIDs": {},
+        "AdLevelPerm": 2,
+        "AdChannelID": "not set",
+        "ModRoleID": "not set",
+        "LogChannelID": "not set",
+        "TrelloLink": "not set",
+        "LastUpdate": "not set",
+        "RankLength": 400,
+        "ranksOn": true
+    },
+    "834616976549871638": {
+        "xpData": {
+            "626616845746831400": {
+                "name": "Trei",
+                "xp": 258,
+                "level": 1
+            },
+            "737109209728024689": {
+                "name": "APPA",
+                "xp": 1341,
+                "level": 4
+            },
+            "851876373068906536": {
+                "name": "spanishwiz",
+                "xp": 998,
+                "level": 3
+            },
+            "386760934867337217": {
+                "name": "BigChief",
+                "xp": 165,
+                "level": 1
+            },
+            "446479365505810432": {
+                "name": "Builder",
+                "xp": 0,
+                "level": 1
+            },
+            "568246712100061224": {
+                "name": "Derjjtfgtdkkgy",
+                "xp": 0,
+                "level": 1
+            },
+            "705300393869049906": {
+                "name": "kjd",
+                "xp": 55,
                 "level": 1
             }
         },
